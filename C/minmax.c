@@ -33,7 +33,7 @@ void print_board( const char b[SIZE][SIZE] ) {
 
 bool is_valid( const char b[SIZE][SIZE], const struct Position *pos ) {
 	return pos->x >= 0 && pos->x < SIZE && pos->y >= 0 && pos->y < SIZE 
-		   && b[pos->x][pos->y] == '-';
+   && b[pos->x][pos->y] == '-';
 }
 
 state_t get_state( const char b[SIZE][SIZE] ) {
@@ -103,21 +103,21 @@ int min_max( char b[SIZE][SIZE], struct Position *pos ) {
 			if ( b[i][j] == '-' ) {
 				b[i][j] = state == X_TURN ? 'x' : 'o'; 
 				int tmp = state == X_TURN ? max( res, min_max(b, NULL) )
-									  	  : min( res, min_max(b, NULL) );
-				if ( res != tmp ) {
-					res = tmp;
-					if ( pos != NULL ) {
-						pos->x = i;
-						pos->y = j;
-					}
-				}
-				b[i][j] = '-';
-			}
+                                          : min( res, min_max(b, NULL) );
+              if ( res != tmp ) {
+               res = tmp;
+               if ( pos != NULL ) {
+                  pos->x = i;
+                  pos->y = j;
+              }
+          }
+          b[i][j] = '-';
+      }
 
-		}
-	}
+  }
+}
 
-	return res;
+return res;
 }
 
 struct Position get_move( char b[SIZE][SIZE] ) {
@@ -129,12 +129,9 @@ struct Position get_move( char b[SIZE][SIZE] ) {
 
 // Testing
 
-#define CHECKRESULT(r,e) do { \
-								if (e == r) \
-									printf( "PASSED.\n" ); \
-								else \
-									printf( "FAILED - Expected %d Received %d\n", e, r ); \
-							} while (false)
+#define CHECKRESULT(r,e) do { e == r ? printf( "PASSED.\n" )\
+                                     : printf( "FAILED - Expected %d Received %d\n", e, r );\
+                            } while (false)
 
 void run_test_set( const char *filename ) {
 	char b[SIZE][SIZE];
@@ -148,7 +145,7 @@ void run_test_set( const char *filename ) {
 
 	while (true) {
 		int num_read = fscanf( f, "%c%c%c%c%c%c%c%c%c %d\n", 
-						b[0], b[0]+1, b[0]+2, b[1], b[1]+1, b[1]+2, b[2], b[2]+1, b[2]+2, &expected );
+          b[0], b[0]+1, b[0]+2, b[1], b[1]+1, b[1]+2, b[2], b[2]+1, b[2]+2, &expected );
 		if ( num_read != 10 ) break;
 
 		int res = min_max(b, NULL);
@@ -160,52 +157,52 @@ void run_test_set( const char *filename ) {
 // Game
 
 void run_game() {
-	char board[SIZE][SIZE] = { { '-', '-', '-' },
-							   { '-', '-', '-' },
-							   { '-', '-', '-' } };
-	int remaining = SIZE*SIZE;
-	bool player = true;
-	state_t state = X_TURN;
+    char board[SIZE][SIZE] = { { '-', '-', '-' },
+                               { '-', '-', '-' },
+                               { '-', '-', '-' } };
+    int remaining = SIZE*SIZE;
+    bool player = true;
+    state_t state = X_TURN;
 
 	// TODO: Error handling
-	while ( remaining-- && (state == X_TURN || state == O_TURN) ) {
-		if ( player ) {
-			struct Position pos;
-			int num_read;
-			do {
-				printf( "x,y = " );
-				num_read = scanf( "%d,%d", &pos.x, &pos.y );
-				if ( num_read != 2 || !is_valid(board, &pos) )
-					printf( "Invalid input\n" );
-				else
-					break;
-			} while (true);
+    while ( remaining-- && (state == X_TURN || state == O_TURN) ) {
+        if ( player ) {
+            struct Position pos;
+            int num_read;
+            do {
+                printf( "x,y = " );
+                num_read = scanf( "%d,%d", &pos.x, &pos.y );
+                if ( num_read != 2 || !is_valid(board, &pos) )
+                    printf( "Invalid input\n" );
+                else
+                    break;
+            } while (true);
 
-			board[pos.x][pos.y] = 'x';
-		} else {
-			struct Position pos = get_move( board );
-			printf( "x,y = %d,%d\n", pos.x, pos.y );
-			board[pos.x][pos.y] = 'o';
-		}
+            board[pos.x][pos.y] = 'x';
+        } else {
+            struct Position pos = get_move( board );
+            printf( "x,y = %d,%d\n", pos.x, pos.y );
+            board[pos.x][pos.y] = 'o';
+        }
 
-		print_board(board);
-		player = !player;
-		state = get_state(board);
-	}
+        print_board(board);
+        player = !player;
+        state = get_state(board);
+    }  
 
-	switch(state) {
-		case X_WON:
-			printf( "X won\n" );
-			break;
-		case O_WON:
-			printf( "O won\n" );
-			break;
-		case DRAW:
-			printf( "Draw!\n" );
-			break;
-		default:
-			printf( "Invalid state %d", state );
-	}
+    switch(state) {
+        case X_WON:
+            printf( "X won\n" );
+            break;
+        case O_WON:
+            printf( "O won\n" );
+            break;
+        case DRAW:
+            printf( "Draw!\n" );
+            break;
+        default:
+            printf( "Invalid state %d", state );
+    }
 }
 
 int main( int argc, char **argv ) {
